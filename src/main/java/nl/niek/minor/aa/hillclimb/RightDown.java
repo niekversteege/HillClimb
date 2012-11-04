@@ -2,13 +2,18 @@ package nl.niek.minor.aa.hillclimb;
 
 public class RightDown
 {
-	private RightDownField	field;
+	private static final int	DEFAULT_ITERATIONS	= 100;
+	private RightDownField		field;
 
 	public RightDown(RightDownField field)
 	{
 		this.field = field;
 	}
-	
+
+	/**
+	 * Apply the hill climb algorithm to the constructed field and find a
+	 * solution.
+	 */
 	public void go()
 	{
 		// create a field with numbers
