@@ -7,16 +7,21 @@ import org.junit.Test;
 
 public class RightDownFieldTest
 {
+	private RightDownField	field;
 
 	@Before
 	public void setUp() throws Exception
 	{
+		
 	}
 
 	@Test
 	public void testCreateEmptySolution()
 	{
-		fail("Not yet implemented");
+		field = new RightDownField(10, 10);
+		Solution s = field.createEmptySolution();
+
+		assertEquals(20, s.size());
 	}
 
 }

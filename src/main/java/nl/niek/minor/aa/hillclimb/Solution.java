@@ -38,33 +38,87 @@ public class Solution
 		solutionSequence = new MoveDirection[size];
 	}
 
-	public void addMove(MoveDirection direction)
+	/**
+	 * Move to the right.
+	 */
+	public void addRight()
 	{
-		if (index != size)
+		checkFull();
+		if (numberOfDownMoves != 0)
 		{
-			if (direction == MoveDirection.DOWN)
-			{
-				if (numberOfDownMoves != 0)
-				{
-					numberOfDownMoves--;
-				}
-			}
-			else
-			{
-				if (numberOfRightMoves != 0)
-				{
-					numberOfRightMoves--;
-				}
-			}
+			solutionSequence[index] = MoveDirection.RIGHT;
+			index++;
+			numberOfDownMoves--;
 		}
 		else
+		{
+			throw new IllegalArgumentException("Cannot go farther down.");
+		}
+	}
+
+	/**
+	 * Move down.
+	 */
+	public void addDown()
+	{
+		checkFull();
+		if (numberOfRightMoves != 0)
+		{
+			solutionSequence[index] = MoveDirection.DOWN;
+			index++;
+			numberOfRightMoves--;
+		}
+		else
+		{
+			throw new IllegalArgumentException("Cannot go farther right.");
+		}
+	}
+
+	private void checkFull()
+	{
+		if (index == size)
 		{
 			throw new IllegalArgumentException("Solution is full.");
 		}
 	}
 
+	/**
+	 * Put the elements of the solution in a random new order.
+	 */
 	public void randomizeSolution()
 	{
+		// TODO
+	}
 
+	/**
+	 * Get the total amount of moves that a solution should have.
+	 * 
+	 * @return
+	 */
+	public final int size()
+	{
+		return size;
+	}
+
+	/**
+	 * Get the direction at the given index.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public final MoveDirection get(final int index)
+	{
+		MoveDirection retVal = null;
+
+		if (solutionSequence.length >= index)
+		{
+			retVal = solutionSequence[index];
+		}
+		else
+		{
+			throw new IllegalArgumentException("Solution size is too small.");
+		}
+
+		return retVal;
 	}
 }
