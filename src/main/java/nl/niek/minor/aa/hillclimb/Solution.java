@@ -93,7 +93,7 @@ public class Solution
 	/**
 	 * Get the total amount of moves that a solution should have.
 	 * 
-	 * @return
+	 * @return Total solution size.
 	 */
 	public final int size()
 	{

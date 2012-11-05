@@ -1,13 +1,22 @@
 package nl.niek.minor.aa.hillclimb;
 
+import nl.niek.minor.aa.hillclimb.field.RightDownField;
+
 public class RightDown
 {
 	private static final int	DEFAULT_ITERATIONS	= 100;
+	private int					iterations			= 0;
 	private RightDownField		field;
 
 	public RightDown(RightDownField field)
 	{
 		this.field = field;
+	}
+
+	public RightDown(RightDownField field, final int iterations)
+	{
+		this(field);
+		this.iterations = iterations;
 	}
 
 	/**
