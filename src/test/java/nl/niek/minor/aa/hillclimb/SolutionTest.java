@@ -2,7 +2,7 @@ package nl.niek.minor.aa.hillclimb;
 
 import static org.junit.Assert.*;
 
-import nl.niek.minor.aa.hillclimb.Solution.MoveDirection;
+import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,16 +21,16 @@ public class SolutionTest
 	public void testAddMove()
 	{
 		solution = new Solution(10, 10);
-		solution.addRight();// 0
-		solution.addDown();// 1
-		solution.addDown();// 2
-		solution.addDown();// 3
-		solution.addDown();// 4
-		solution.addRight();// 5
-		solution.addRight();// 6
-		solution.addRight();// 7
-		solution.addDown();// 8
-		solution.addRight();// 9
+		solution.addRight(1);// 0
+		solution.addDown(1);// 1
+		solution.addDown(1);// 2
+		solution.addDown(1);// 3
+		solution.addDown(1);// 4
+		solution.addRight(1);// 5
+		solution.addRight(1);// 6
+		solution.addRight(1);// 7
+		solution.addDown(1);// 8
+		solution.addRight(1);// 9
 
 		assertEquals(MoveDirection.RIGHT, solution.get(0));
 		assertEquals(MoveDirection.DOWN, solution.get(1));
@@ -48,43 +48,53 @@ public class SolutionTest
 	public void testAddMoveFull()
 	{
 		solution = new Solution(5, 5);
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
 
-		solution.addDown();
+		solution.addDown(1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveRightMovesFull()
 	{
 		solution = new Solution(5, 5);
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
-		solution.addRight();
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
+		solution.addRight(1);
 
-		solution.addRight();
+		solution.addRight(1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveDownMovesFull()
 	{
 		solution = new Solution(5, 5);
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
-		solution.addDown();
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
+		solution.addDown(1);
 
-		solution.addDown();
+		solution.addDown(1);
+	}
+
+	@Test
+	public void testWeight()
+	{
+		solution = new Solution(5, 5);
+		solution.addDown(5);
+		solution.addDown(8);
+		
+		assertEquals(5 + 8, solution.getTotalWeight());
 	}
 }

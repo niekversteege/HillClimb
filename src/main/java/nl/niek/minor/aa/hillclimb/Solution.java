@@ -1,5 +1,7 @@
 package nl.niek.minor.aa.hillclimb;
 
+import nl.niek.minor.aa.hillclimb.field.MoveDirection;
+
 /**
  * Class that contains a sequence of (representations of) right or down
  * movements that lead to the most right and most down tile.
@@ -12,15 +14,11 @@ public class Solution
 
 	private int				size;
 	private int				index;
+	private int				weight;
 	private MoveDirection[]	solutionSequence;
 
 	private int				numberOfDownMoves;
 	private int				numberOfRightMoves;
-
-	public enum MoveDirection
-	{
-		RIGHT, DOWN;
-	}
 
 	/**
 	 * Create a solution for a field with the given dimensions.
@@ -28,10 +26,11 @@ public class Solution
 	 * @param height
 	 * @param width
 	 */
-	public Solution(int height, int width)
+	public Solution(final int height, final int width)
 	{
 		this.size = (height + width);
 		this.index = 0;
+		this.weight = 0;
 		this.numberOfDownMoves = height;
 		this.numberOfRightMoves = width;
 
@@ -40,8 +39,10 @@ public class Solution
 
 	/**
 	 * Move to the right.
+	 * 
+	 * @param weight
 	 */
-	public void addRight()
+	public void addRight(final int weight)
 	{
 		checkFull();
 		if (numberOfDownMoves != 0)
@@ -49,6 +50,7 @@ public class Solution
 			solutionSequence[index] = MoveDirection.RIGHT;
 			index++;
 			numberOfDownMoves--;
+			this.weight += weight;
 		}
 		else
 		{
@@ -58,8 +60,10 @@ public class Solution
 
 	/**
 	 * Move down.
+	 * 
+	 * @param weight
 	 */
-	public void addDown()
+	public void addDown(final int weight)
 	{
 		checkFull();
 		if (numberOfRightMoves != 0)
@@ -67,6 +71,7 @@ public class Solution
 			solutionSequence[index] = MoveDirection.DOWN;
 			index++;
 			numberOfRightMoves--;
+			this.weight += weight;
 		}
 		else
 		{
@@ -120,5 +125,28 @@ public class Solution
 		}
 
 		return retVal;
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuffer buffer = new StringBuffer("[");
+
+		for (MoveDirection m : solutionSequence)
+		{
+			if (m != null)
+			{
+				buffer.append(m.toString());
+			}
+		}
+
+		buffer.append("] - " + weight);
+
+		return buffer.toString();
+	}
+
+	public final int getTotalWeight()
+	{
+		return weight;
 	}
 }
