@@ -171,12 +171,13 @@ public class SolutionTest
 		solution.addDown();
 		solution.addRight();
 		solution.addDown();// 3 should become right
-		solution.addRight();
+		solution.addRight();// 4 should become down
 		solution.addDown();
 
 		solution.swapDirectionAndRebuild(3);
 
 		assertEquals(MoveDirection.RIGHT, solution.get(3).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(4).getDirection());
 	}
 	
 	@Test
@@ -204,7 +205,7 @@ public class SolutionTest
 		solution.addRight(); // 6
 		solution.addDown(); // 0
 
-		solution.swapDirection();
+		solution.swapRandomDirection();
 
 		int nrOfDownMoves = 0;
 		int nrOfRightMoves = 0;

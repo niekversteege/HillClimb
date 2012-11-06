@@ -83,7 +83,7 @@ public class RightDown
 		for (int i = 0; i < maxIterations; i++)
 		{
 			Solution newSolution = betterSolution.copy();
-			newSolution.swapDirection();
+			newSolution.swapRandomDirection();
 
 			if (newSolution.betterThan(betterSolution))
 			{

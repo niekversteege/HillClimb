@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import nl.niek.minor.aa.hillclimb.cli.RDPrinter;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
@@ -351,10 +352,10 @@ public class Solution
 		{
 			List<MoveDirection> directions = getDirectionList();
 
-			directions.set(index, toggleDirection(directions.get(index)));
+			MoveDirection direction = directions.get(index);
 
-			directions.set(index + 1,
-					toggleDirection(directions.get(index + 1)));
+			directions.set(index, directions.get(index + 1));
+			directions.set(index + 1, direction);
 
 			rebuildSolutionFromDirectionList(directions);
 		}
@@ -474,33 +475,18 @@ public class Solution
 	 */
 	public Solution copy()
 	{
-		Solution solution = new Solution(field, allMoves);
+		List<Move> moves = new ArrayList<Move>();
+		moves.addAll(allMoves);
+		Solution solution = new Solution(field, moves);
 		return solution;
-	}
-	
-	/**
-	 * Swap / Switch two moves at the first point after index where two different directions
-	 * follow each other.
-	 */
-	public void swapDirection(final int index)
-	{
-		for (int i = index; i < getNrOfCurrentMoves() - 1; i++)
-		{
-			MoveDirection currentDirection = allMoves.get(i).getDirection();
-			if (allMoves.get(i + 1).getDirection() != currentDirection)
-			{
-				swapDirectionAndRebuild(i);
-				return;
-			}
-		}
 	}
 
 	/**
-	 * Swap / Switch two moves at the first point where two different directions
-	 * follow each other.
+	 * Swap / Switch two moves at a random point.
 	 */
-	public void swapDirection()
+	public void swapRandomDirection()
 	{
-		swapDirection(0);
+		Random r = new Random();
+		swapDirectionAndRebuild(r.nextInt(getNrOfCurrentMoves() - 1));
 	}
 }
