@@ -5,7 +5,7 @@ import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 public class RightDown
 {
-	private static final int	DEFAULT_ITERATIONS	= 100;
+	private static final int	DEFAULT_ITERATIONS	= 200;
 	private int					maxIterations		= 0;
 	private RightDownField		field;
 	private Solution			bestSolution;
@@ -64,24 +64,44 @@ public class RightDown
 	private void runSteepestAscent()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void runNextAscent()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	private void runRandomMutation()
 	{
 		Solution betterSolution = field.createEmptySolution();
 		betterSolution.randomizeSolution();
+		
+		RDPrinter.println("Random solution: " + betterSolution);
 
 		for (int i = 0; i < maxIterations; i++)
 		{
-			// TODO: applying changes to solution requires new weight data.
+			Solution newSolution = betterSolution.copy();
+			newSolution.applyRandomChanges();
+
+			if (newSolution.betterThan(betterSolution))
+			{
+				betterSolution = newSolution.copy();
+				RDPrinter
+						.println("Applying random changes produced a better solution in iteration "
+								+ i + ". With weight: " + betterSolution.getTotalWeight() + ".");
+			}
 		}
+
+		if (bestSolution == null || betterSolution.betterThan(bestSolution))
+		{
+			bestSolution = betterSolution.copy();
+		}
+
+		RDPrinter
+				.println("Best solution after running random mutation algorithm:");
+		RDPrinter.println(bestSolution.toString());
 	}
 
 	/**

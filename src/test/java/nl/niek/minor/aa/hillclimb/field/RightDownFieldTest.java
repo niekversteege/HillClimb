@@ -1,7 +1,9 @@
-package nl.niek.minor.aa.hillclimb;
+package nl.niek.minor.aa.hillclimb.field;
 
 import static org.junit.Assert.*;
 
+import nl.niek.minor.aa.hillclimb.Move;
+import nl.niek.minor.aa.hillclimb.Solution;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 

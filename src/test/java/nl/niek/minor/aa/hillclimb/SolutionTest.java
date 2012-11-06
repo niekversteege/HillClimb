@@ -232,21 +232,21 @@ public class SolutionTest
 
 		solution.swapDirection(7);
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testSwapAtLastMove()
 	{
 		RightDownField defaultField = FieldFactory.getDefaultField();
 		solution = defaultField.createEmptySolution();
-		
+
 		solution.addRight();// 5
 		solution.addDown();// 9
 		solution.addDown();// 3
 		solution.addDown();// 4
 		solution.addRight(); // 5
-		
+
 		solution.swapDirection(4);
-		
+
 		assertEquals(MoveDirection.DOWN, solution.get(4));
 	}
 
@@ -289,13 +289,13 @@ public class SolutionTest
 
 		assertEquals(18, solution.getNrOfCurrentMoves());
 	}
-	
+
 	@Test
 	public void testApplyRandomChanges()
 	{
 		RightDownField defaultField = FieldFactory.getDefaultField();
 		solution = defaultField.createEmptySolution();
-		
+
 		solution.addRight();// 5
 		solution.addDown();// 9
 		solution.addDown();// 3
@@ -314,11 +314,124 @@ public class SolutionTest
 		solution.addRight();// 7
 		solution.addRight(); // 6
 		solution.addDown(); // 0
-		
-		Solution copySolution = solution;
-		
+
 		solution.applyRandomChanges();
+
+		int nrOfDownMoves = 0;
+		int nrOfRightMoves = 0;
+
+		for (int i = 0; i < solution.getNrOfCurrentMoves(); i++)
+		{
+			if (solution.get(i) == MoveDirection.DOWN)
+			{
+				nrOfDownMoves++;
+			}
+			else
+			{
+				nrOfRightMoves++;
+			}
+		}
 		
-		assertFalse(copySolution.equals(solution));
+		assertEquals(MoveDirection.DOWN, solution.get(17));
+		assertEquals(9, nrOfDownMoves);
+		assertEquals(9, nrOfRightMoves);
+	}
+
+	@Test
+	public void testEquals()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		Solution anotherSolution = defaultField.createEmptySolution();
+
+		anotherSolution.addRight();// 5
+		anotherSolution.addDown();// 9
+		anotherSolution.addDown();// 3
+		anotherSolution.addDown();// 4
+		anotherSolution.addRight(); // 5
+		anotherSolution.addDown();// 2
+		anotherSolution.addDown();// 2
+		anotherSolution.addDown();// 2
+		anotherSolution.addRight();// 6
+		anotherSolution.addRight();// 2
+		anotherSolution.addRight();// 9
+		anotherSolution.addDown();// 9
+		anotherSolution.addRight();// 3
+		anotherSolution.addRight();// 5
+		anotherSolution.addDown();// 5
+		anotherSolution.addRight();// 7
+		anotherSolution.addRight(); // 6
+		anotherSolution.addDown(); // 0
+
+		assertTrue(solution.equals(anotherSolution));
+	}
+
+	@Test
+	public void testNotEquals()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		Solution anotherSolution = defaultField.createEmptySolution();
+
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+		anotherSolution.addDown();
+		anotherSolution.addDown();
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+		anotherSolution.addRight();
+		anotherSolution.addRight();
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+		anotherSolution.addRight();
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+		anotherSolution.addDown();
+		anotherSolution.addRight();
+		anotherSolution.addDown();
+
+		assertFalse(solution.equals(anotherSolution));
 	}
 }

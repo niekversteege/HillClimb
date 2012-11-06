@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import nl.niek.minor.aa.hillclimb.cli.RDPrinter;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
@@ -37,18 +38,24 @@ public class Solution
 	 * @param height
 	 * @param width
 	 */
-	public Solution(RightDownField field, final int height, final int width)
+	public Solution(RightDownField field)
 	{
 		this.field = field;
-		this.maxSize = ((height - 1) + (width - 1));
+		this.maxSize = ((field.getHeight() - 1) + (field.getWidth() - 1));
 
 		this.nrOfDownMoves = 0;
 		this.nrOfRightMoves = 0;
 
-		this.maxDownMoves = height - 1;
-		this.maxRightMoves = width - 1;
+		this.maxDownMoves = field.getHeight() - 1;
+		this.maxRightMoves = field.getWidth() - 1;
 
 		allMoves = new ArrayList<Move>();
+	}
+
+	protected Solution(RightDownField field, List<Move> allMoves)
+	{
+		this(field);
+		this.allMoves = allMoves;
 	}
 
 	private final int totalMoves()
@@ -177,12 +184,12 @@ public class Solution
 	}
 
 	/**
-	 * Apply a random change to the Solution. Change 50% of the directions in
-	 * the Solution. Which ones are changed is determined randomly.
+	 * Apply a random change to the Solution. Change 5 directions in the
+	 * Solution. Which ones are changed is determined randomly.
 	 */
 	public void applyRandomChanges()
 	{
-		int numberOfChanges = maxSize / 2;
+		int numberOfChanges = 5;
 		Random r = new Random();
 		/*
 		 * Need to reduce by one since we cannot swap the last element in the
@@ -294,40 +301,65 @@ public class Solution
 
 	/**
 	 * Toggle the move at the given index between Right or Down. Also updates
-	 * the total weight of the Solution. We cannot swap the last Move. We can
-	 * only update it after the Move before it has swapped.
+	 * the total weight of the Solution. We cannot swap the last Move.
 	 * 
 	 * @param index
 	 */
 	protected void swapDirection(int index)
 	{
-		if (index < allMoves.size() - 1)
+		if (index < (allMoves.size() - 1))
 		{
 			Move currentMove = allMoves.get(index);
 
 			int currentColumn = currentMove.getColumn();
 			int currentRow = currentMove.getRow();
 
+			MoveDirection currentDirection = currentMove.getDirection();
+
 			Move newMove = null;
 
-			if (currentMove.getDirection() == MoveDirection.DOWN)
+			/*
+			 * We cannot swap directions on moves on the edges of the map.
+			 */
+			if (isNotOnEdgeOfMap(currentRow, currentColumn))
 			{
-				// if down; row - 1; column + 1; to get a right move.
-				newMove = field.createMoveObject(currentRow - 1,
-						currentColumn + 1, MoveDirection.RIGHT);
-				/* We also need to swap the direction of the move after this one */
-				allMoves.get(index + 1).setDirection(MoveDirection.DOWN);
-			}
-			else
-			{
-				// else right: row + 1; column - 1; to get a down move.
-				newMove = field.createMoveObject(currentRow + 1,
-						currentColumn - 1, MoveDirection.DOWN);
-				/* We also need to swap the direction of the move after this one */
-				allMoves.get(index + 1).setDirection(MoveDirection.RIGHT);
-			}
+				switch (currentDirection)
+				{
+				case DOWN:
+					if (currentRow > 0)
+					{
+						newMove = field.createMoveObject(currentRow - 1,
+								currentColumn + 1, MoveDirection.RIGHT);
+						// TODO: connect the move to the rest of the remaining
+						// moves.
+					}
+					else
+					{
+						throw new IllegalStateException(
+								"Down moves must be on row 1 or larger.");
+					}
+					break;
+				case RIGHT:
+					if (currentColumn > 0)
+					{
+						newMove = field.createMoveObject(currentRow + 1,
+								currentColumn - 1, MoveDirection.DOWN);
+						// TODO: connect the move to the rest of the remaining
+						// moves.
+					}
+					else
+					{
+						throw new IllegalStateException(
+								"Right moves must be on col 1 or larger.");
+					}
+					break;
+				default:
+					/* error */
+					break;
+				}
 
-			allMoves.set(index, newMove);
+				allMoves.set(index, newMove);
+			}
 		}
 		else if (index == allMoves.size() - 1)
 		{
@@ -340,25 +372,38 @@ public class Solution
 		}
 	}
 
+	private boolean isNotOnEdgeOfMap(final int row, final int column)
+	{
+		return column < field.getWidth() - 1 && row < field.getHeight() - 1;
+	}
+
 	@Override
 	public boolean equals(Object obj)
 	{
 		if (obj instanceof Solution)
 		{
 			Solution compare = (Solution) obj;
-			int i = 0;
-			for (Move move : allMoves)
-			{
-				if (!move.equals(compare.get(i)))
-				{
-					return false;
-				}
-				i++;
-			}
 
-			return true;
+			if (this.getTotalWeight() != compare.getTotalWeight())
+			{
+				for (int i = 0; i < allMoves.size(); i++)
+				{
+					if (!allMoves.get(i).equals(compare.get(i)))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
 		}
 
 		return false;
+	}
+
+	public Solution copy()
+	{
+		List<Move> allMovesCopy = new ArrayList<Move>(allMoves);
+		return new Solution(field, allMovesCopy);
 	}
 }

@@ -1,5 +1,6 @@
 package nl.niek.minor.aa.hillclimb.field;
 
+import sun.org.mozilla.javascript.internal.ast.WithStatement;
 import nl.niek.minor.aa.hillclimb.Move;
 import nl.niek.minor.aa.hillclimb.Solution;
 
@@ -68,7 +69,7 @@ public class RightDownField
 	 */
 	public Solution createEmptySolution()
 	{
-		return new Solution(this, height, width);
+		return new Solution(this);
 	}
 
 	/**
@@ -80,9 +81,9 @@ public class RightDownField
 	 */
 	public final int getWeight(final int row, final int column)
 	{
-		if (row > height || row < 0 || column > width || column < 0)
+		if (row >= height || row < 0 || column >= width || column < 0)
 		{
-			throw new IllegalArgumentException("Out of field bounds.");
+			throw new IllegalArgumentException("Out of field bounds: " + row + ", " + column);
 		}
 		return field[row][column];
 	}
@@ -99,5 +100,15 @@ public class RightDownField
 	{
 		Move move = new Move(row, column, getWeight(row, column), direction);
 		return move;
+	}
+
+	public final int getWidth()
+	{
+		return width;
+	}
+	
+	public final int getHeight()
+	{
+		return height;
 	}
 }
