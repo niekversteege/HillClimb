@@ -5,8 +5,9 @@ import nl.niek.minor.aa.hillclimb.field.RightDownField;
 public class RightDown
 {
 	private static final int	DEFAULT_ITERATIONS	= 100;
-	private int					iterations			= 0;
+	private int					maxIterations		= 0;
 	private RightDownField		field;
+	private Solution			bestSolution;
 
 	/**
 	 * Create a RightDown solver with a default number of iterations to run to
@@ -16,7 +17,7 @@ public class RightDown
 	 */
 	public RightDown(RightDownField field)
 	{
-		this.field = field;
+		this(field, DEFAULT_ITERATIONS);
 	}
 
 	/**
@@ -28,21 +29,34 @@ public class RightDown
 	 */
 	public RightDown(RightDownField field, final int iterations)
 	{
-		this(field);
-		this.iterations = iterations;
+		this.field = field;
+		this.bestSolution = null;
+		this.maxIterations = iterations;
 	}
 
 	/**
 	 * Apply the hill climb algorithm to the constructed field and find a
 	 * solution.
 	 */
-	public void go()
+	public void run(HillclimbMethod method)
 	{
-		// create a field with numbers
-		// choose a hillclimb strategy: next-ascent or random-mutation
-		// choose a random solution for the given right-down field
-		// apply algorithm for X amount of times
-		// print result
-		// print the time it took
+		Solution currentSolution = field.createEmptySolution();
+		currentSolution.randomizeSolution();
+
+		for (int i = 0; i < maxIterations; i++)
+		{
+			// TODO: applying changes to solution requires new weight data.
+		}
+	}
+
+	/**
+	 * Get the best solution that was found. Can return null if run() method is
+	 * not yet run.
+	 * 
+	 * @return
+	 */
+	public final Solution getBestSolution()
+	{
+		return bestSolution;
 	}
 }

@@ -2,9 +2,12 @@ package nl.niek.minor.aa.hillclimb;
 
 import static org.junit.Assert.*;
 
+import nl.niek.minor.aa.hillclimb.field.FieldFactory;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
+import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolutionTest
@@ -20,17 +23,17 @@ public class SolutionTest
 	@Test
 	public void testAddMove()
 	{
-		solution = new Solution(10, 10);
-		solution.addRight(1);// 0
-		solution.addDown(1);// 1
-		solution.addDown(1);// 2
-		solution.addDown(1);// 3
-		solution.addDown(1);// 4
-		solution.addRight(1);// 5
-		solution.addRight(1);// 6
-		solution.addRight(1);// 7
-		solution.addDown(1);// 8
-		solution.addRight(1);// 9
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addRight();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addDown();
+		solution.addRight();
 
 		assertEquals(MoveDirection.RIGHT, solution.get(0));
 		assertEquals(MoveDirection.DOWN, solution.get(1));
@@ -44,57 +47,138 @@ public class SolutionTest
 		assertEquals(MoveDirection.RIGHT, solution.get(9));
 	}
 
+	@Test
+	public void testAddMoveWeight()
+	{
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+
+		assertEquals(5 + 9 + 3 + 4, solution.getTotalWeight());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveFull()
 	{
-		solution = new Solution(5, 5);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
 
-		solution.addDown(1);
+		solution.addDown();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveRightMovesFull()
 	{
-		solution = new Solution(5, 5);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
-		solution.addRight(1);
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
+		solution.addRight();
 
-		solution.addRight(1);
+		solution.addRight();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveDownMovesFull()
 	{
-		solution = new Solution(5, 5);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
-		solution.addDown(1);
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
+		solution.addDown();
 
-		solution.addDown(1);
+		solution.addDown();
 	}
 
 	@Test
 	public void testWeight()
 	{
-		solution = new Solution(5, 5);
-		solution.addDown(5);
-		solution.addDown(8);
-		
-		assertEquals(5 + 8, solution.getTotalWeight());
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addDown();// 4
+		solution.addDown();// 8
+
+		assertEquals(4 + 8, solution.getTotalWeight());
+	}
+
+	@Test
+	public void testBetterThan()
+	{
+		solution = FieldFactory.getDefaultField().createEmptySolution();
+		solution.addDown();// 4
+		solution.addDown();// 8
+		solution.addDown();// 2
+
+		Solution anotherSolution = FieldFactory.getDefaultField()
+				.createEmptySolution();
+		anotherSolution.addDown(); // 4
+		anotherSolution.addDown(); // 8
+		anotherSolution.addRight(); // 3
+
+		assertTrue(solution.betterThan(anotherSolution));
+	}
+
+	@Test
+	public void testSwap()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addDown();
+		solution.addDown();
+		solution.addRight();
+		solution.addDown();// 3 should become right
+		solution.addRight();
+
+		solution.swap(3);
+
+		assertEquals(MoveDirection.RIGHT, solution.get(3));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testSwapIndexTooBig()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addDown();
+		solution.addDown();
+		solution.addRight();
+		solution.addDown();// 3 should become right
+		solution.addRight();
+
+		solution.swap(7);
 	}
 }

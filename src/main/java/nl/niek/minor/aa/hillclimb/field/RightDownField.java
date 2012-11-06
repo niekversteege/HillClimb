@@ -67,7 +67,7 @@ public class RightDownField
 	 */
 	public Solution createEmptySolution()
 	{
-		return new Solution(height, width);
+		return new Solution(this, height, width);
 	}
 
 	/**

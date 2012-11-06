@@ -11,7 +11,7 @@ public class RDMain
 	public static void main(String[] args)
 	{
 		RightDown rd = new RightDown(FieldFactory.getDefaultField());
-		rd.go();
+		rd.run(HillclimbMethod.RANDOM_MUTATION);
 	}
 
 }

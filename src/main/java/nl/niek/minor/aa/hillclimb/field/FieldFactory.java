@@ -16,11 +16,11 @@ public class FieldFactory
 	{
 		RightDownField field = new RightDownField();
 
-		int[] row0 = new int[] { 3, 5, 2, 1, 6, 3, 5, 6, 2, 7 };
+		int[] row0 = new int[] { 0, 5, 2, 1, 6, 3, 5, 6, 2, 7 };
 		int[] row1 = new int[] { 4, 9, 3, 5, 7, 2, 8, 3, 5, 2 };
 		int[] row2 = new int[] { 8, 3, 9, 4, 2, 1, 1, 4, 3, 2 };
 		int[] row3 = new int[] { 2, 4, 5, 1, 4, 3, 4, 3, 7, 9 };
-		int[] row4 = new int[] { 1, 9, 2, 6, 2, 9, 3, 5, 7, 6 };
+		int[] row4 = new int[] { 1, 9, 2, 6, 2, 9, 3, 5, 7, 0 };
 
 		field.addRow(row0);
 		field.addRow(row1);
