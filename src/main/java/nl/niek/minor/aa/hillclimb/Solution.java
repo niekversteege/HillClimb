@@ -235,7 +235,7 @@ public class Solution
 	 */
 	public void swapDirection(int index)
 	{
-		if (index <= totalMoves())
+		if (index <  allMoves.size())
 		{
 			Move currentMove = allMoves.get(index);
 			int currentColumn = currentMove.getColumn();
@@ -250,14 +250,16 @@ public class Solution
 				// if down; row - 1; column + 1; to get a right move.
 				newMove = field.createMoveObject(currentRow - 1,
 						currentColumn + 1, MoveDirection.RIGHT);
-				/* We also need to swap the direction of the move before this one */
+				/* We also need to swap the direction of the move after this one */
+				allMoves.get(index + 1).setDirection(MoveDirection.DOWN);
 			}
 			else
 			{
 				// else right: row + 1; column - 1; to get a down move.
 				newMove = field.createMoveObject(currentRow + 1,
 						currentColumn - 1, MoveDirection.DOWN);
-				/* We also need to swap the direction of the move before this one */
+				/* We also need to swap the direction of the move after this one */
+				allMoves.get(index + 1).setDirection(MoveDirection.RIGHT);
 			}
 
 			allMoves.set(index, newMove);

@@ -171,6 +171,7 @@ public class SolutionTest
 		solution.addRight();
 		solution.addDown();// 3 should become right
 		solution.addRight();
+		solution.addRight();
 
 		solution.swapDirection(3);
 
@@ -188,12 +189,13 @@ public class SolutionTest
 		solution.addRight();//3
 		solution.addDown();// changes from 4 to 9 in swap
 		solution.addRight();//5
+		solution.addDown();//2
 
-		assertEquals(24, solution.getTotalWeight());
+		assertEquals(26, solution.getTotalWeight());
 		
 		solution.swapDirection(3);
 		
-		assertEquals(29, solution.getTotalWeight());
+		assertEquals(31, solution.getTotalWeight());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -205,7 +207,7 @@ public class SolutionTest
 		solution.addDown();
 		solution.addDown();
 		solution.addRight();
-		solution.addDown();// 3 should become right
+		solution.addDown();
 		solution.addRight();
 
 		solution.swapDirection(7);

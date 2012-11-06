@@ -4,7 +4,8 @@ import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 
 /**
  * Wrapping class to hold data for a move. Contains X, Y location on the board,
- * it's direction and it's weight.
+ * it's direction and it's weight. The coordinates this points at are where the
+ * move was made to.
  * 
  * @author Niek
  * 
