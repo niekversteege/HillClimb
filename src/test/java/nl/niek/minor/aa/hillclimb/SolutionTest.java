@@ -1,6 +1,7 @@
 package nl.niek.minor.aa.hillclimb;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import nl.niek.minor.aa.hillclimb.field.FieldFactory;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
@@ -231,6 +232,23 @@ public class SolutionTest
 
 		solution.swapDirection(7);
 	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testSwapAtLastMove()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+		
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		
+		solution.swapDirection(4);
+		
+		assertEquals(MoveDirection.DOWN, solution.get(4));
+	}
 
 	@Test
 	public void testRandomizeSolution()
@@ -270,5 +288,37 @@ public class SolutionTest
 		solution.randomizeSolution();
 
 		assertEquals(18, solution.getNrOfCurrentMoves());
+	}
+	
+	@Test
+	public void testApplyRandomChanges()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+		
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+		
+		Solution copySolution = solution;
+		
+		solution.applyRandomChanges();
+		
+		assertFalse(copySolution.equals(solution));
 	}
 }

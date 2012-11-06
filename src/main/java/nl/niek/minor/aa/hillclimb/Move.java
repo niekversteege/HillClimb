@@ -51,4 +51,23 @@ public class Move
 		this.direction = direction;
 	}
 
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Move)
+		{
+			Move compare = (Move) obj;
+
+			if (row != compare.getRow() || column != compare.getColumn()
+					|| weight != compare.getWeight()
+					|| direction != compare.getDirection())
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
 }

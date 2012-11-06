@@ -3,6 +3,7 @@ package nl.niek.minor.aa.hillclimb;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
@@ -179,9 +180,21 @@ public class Solution
 	 * Apply a random change to the Solution. Change 50% of the directions in
 	 * the Solution. Which ones are changed is determined randomly.
 	 */
-	public void applyRandomChange()
+	public void applyRandomChanges()
 	{
-		// TODO
+		int numberOfChanges = maxSize / 2;
+		Random r = new Random();
+		/*
+		 * Need to reduce by one since we cannot swap the last element in the
+		 * list.
+		 */
+		int nrOfCurrentMoves = getNrOfCurrentMoves() - 1;
+
+		for (int i = 0; i < numberOfChanges; i++)
+		{
+			int randomMove = r.nextInt(nrOfCurrentMoves);
+			swapDirection(randomMove);
+		}
 	}
 
 	/**
@@ -281,13 +294,14 @@ public class Solution
 
 	/**
 	 * Toggle the move at the given index between Right or Down. Also updates
-	 * the total weight of the Solution.
+	 * the total weight of the Solution. We cannot swap the last Move. We can
+	 * only update it after the Move before it has swapped.
 	 * 
 	 * @param index
 	 */
 	protected void swapDirection(int index)
 	{
-		if (index < allMoves.size())
+		if (index < allMoves.size() - 1)
 		{
 			Move currentMove = allMoves.get(index);
 
@@ -315,10 +329,36 @@ public class Solution
 
 			allMoves.set(index, newMove);
 		}
+		else if (index == allMoves.size() - 1)
+		{
+			throw new IllegalArgumentException("Cannot swap the last Move.");
+		}
 		else
 		{
 			throw new IllegalArgumentException(
 					"This move has not been set yet.");
 		}
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Solution)
+		{
+			Solution compare = (Solution) obj;
+			int i = 0;
+			for (Move move : allMoves)
+			{
+				if (!move.equals(compare.get(i)))
+				{
+					return false;
+				}
+				i++;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 }

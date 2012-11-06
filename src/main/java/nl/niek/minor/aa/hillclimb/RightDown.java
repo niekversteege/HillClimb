@@ -75,8 +75,8 @@ public class RightDown
 
 	private void runRandomMutation()
 	{
-		Solution currentSolution = field.createEmptySolution();
-		currentSolution.randomizeSolution();
+		Solution betterSolution = field.createEmptySolution();
+		betterSolution.randomizeSolution();
 
 		for (int i = 0; i < maxIterations; i++)
 		{
