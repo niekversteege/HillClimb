@@ -77,20 +77,22 @@ public class RightDown
 	{
 		Solution betterSolution = field.createEmptySolution();
 		betterSolution.randomizeSolution();
-		
+
 		RDPrinter.println("Random solution: " + betterSolution);
 
 		for (int i = 0; i < maxIterations; i++)
 		{
 			Solution newSolution = betterSolution.copy();
-			newSolution.applyRandomChanges();
+			newSolution.finishSolutionRandomly();
 
 			if (newSolution.betterThan(betterSolution))
 			{
 				betterSolution = newSolution.copy();
 				RDPrinter
 						.println("Applying random changes produced a better solution in iteration "
-								+ i + ". With weight: " + betterSolution.getTotalWeight() + ".");
+								+ i
+								+ ". With weight: "
+								+ betterSolution.getTotalWeight() + ".");
 			}
 		}
 

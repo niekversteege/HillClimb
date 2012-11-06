@@ -8,6 +8,7 @@ import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolutionTest
@@ -35,16 +36,16 @@ public class SolutionTest
 		solution.addDown();
 		solution.addRight();
 
-		assertEquals(MoveDirection.RIGHT, solution.get(0));
-		assertEquals(MoveDirection.DOWN, solution.get(1));
-		assertEquals(MoveDirection.DOWN, solution.get(2));
-		assertEquals(MoveDirection.DOWN, solution.get(3));
-		assertEquals(MoveDirection.DOWN, solution.get(4));
-		assertEquals(MoveDirection.RIGHT, solution.get(5));
-		assertEquals(MoveDirection.RIGHT, solution.get(6));
-		assertEquals(MoveDirection.RIGHT, solution.get(7));
-		assertEquals(MoveDirection.DOWN, solution.get(8));
-		assertEquals(MoveDirection.RIGHT, solution.get(9));
+		assertEquals(MoveDirection.RIGHT, solution.get(0).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(1).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(2).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(3).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(4).getDirection());
+		assertEquals(MoveDirection.RIGHT, solution.get(5).getDirection());
+		assertEquals(MoveDirection.RIGHT, solution.get(6).getDirection());
+		assertEquals(MoveDirection.RIGHT, solution.get(7).getDirection());
+		assertEquals(MoveDirection.DOWN, solution.get(8).getDirection());
+		assertEquals(MoveDirection.RIGHT, solution.get(9).getDirection());
 	}
 
 	@Test
@@ -176,7 +177,7 @@ public class SolutionTest
 
 		solution.swapDirection(3);
 
-		assertEquals(MoveDirection.RIGHT, solution.get(3));
+		assertEquals(MoveDirection.RIGHT, solution.get(3).getDirection());
 	}
 
 	@Test
@@ -315,14 +316,14 @@ public class SolutionTest
 		solution.addRight(); // 6
 		solution.addDown(); // 0
 
-		solution.applyRandomChanges();
+		solution.finishSolutionRandomly();
 
 		int nrOfDownMoves = 0;
 		int nrOfRightMoves = 0;
 
 		for (int i = 0; i < solution.getNrOfCurrentMoves(); i++)
 		{
-			if (solution.get(i) == MoveDirection.DOWN)
+			if (solution.get(i).getDirection() == MoveDirection.DOWN)
 			{
 				nrOfDownMoves++;
 			}
@@ -332,7 +333,6 @@ public class SolutionTest
 			}
 		}
 		
-		assertEquals(MoveDirection.DOWN, solution.get(17));
 		assertEquals(9, nrOfDownMoves);
 		assertEquals(9, nrOfRightMoves);
 	}
@@ -433,5 +433,61 @@ public class SolutionTest
 		anotherSolution.addDown();
 
 		assertFalse(solution.equals(anotherSolution));
+	}
+
+	@Test
+	public void testCopy()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		Solution anotherSolution = solution.copy();
+
+		assertTrue(solution.equals(anotherSolution));
+	}
+	
+	@Test
+	public void testContainsCoordinates()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		
+		assertTrue(solution.containsCoordinates(0, 1));
+	}
+	
+	@Test
+	public void testNotContainsCoordinates()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		
+		assertFalse(solution.containsCoordinates(3, 5));
 	}
 }

@@ -20,10 +20,7 @@ public class Solution
 {
 	private RightDownField	field;
 	private int				maxSize;
-	private List<Move>		allMoves;
-
-	private int				nrOfDownMoves;
-	private int				nrOfRightMoves;
+	private List<Move>		allMoves	= null;
 
 	final private int		maxDownMoves;
 	final private int		maxRightMoves;
@@ -43,9 +40,6 @@ public class Solution
 		this.field = field;
 		this.maxSize = ((field.getHeight() - 1) + (field.getWidth() - 1));
 
-		this.nrOfDownMoves = 0;
-		this.nrOfRightMoves = 0;
-
 		this.maxDownMoves = field.getHeight() - 1;
 		this.maxRightMoves = field.getWidth() - 1;
 
@@ -55,12 +49,7 @@ public class Solution
 	protected Solution(RightDownField field, List<Move> allMoves)
 	{
 		this(field);
-		this.allMoves = allMoves;
-	}
-
-	private final int totalMoves()
-	{
-		return nrOfRightMoves + nrOfDownMoves;
+		this.allMoves.addAll(allMoves);
 	}
 
 	private void addMove(final int row, final int column,
@@ -69,6 +58,31 @@ public class Solution
 		Move newMove = field.createMoveObject(row, column, direction);
 
 		allMoves.add(newMove);
+	}
+
+	private final int countMoves(MoveDirection direction)
+	{
+		int moves = 0;
+
+		for (Move m : allMoves)
+		{
+			if (m.getDirection() == direction)
+			{
+				moves++;
+			}
+		}
+
+		return moves;
+	}
+
+	private final int countDownMoves()
+	{
+		return countMoves(MoveDirection.DOWN);
+	}
+
+	private final int countRightMoves()
+	{
+		return countMoves(MoveDirection.RIGHT);
 	}
 
 	/**
@@ -83,15 +97,17 @@ public class Solution
 			throw new IllegalArgumentException("Solution is full.");
 		}
 
-		if (nrOfRightMoves < maxRightMoves)
+		int rightMoves = countRightMoves();
+		int downMoves = countDownMoves();
+
+		if (rightMoves < maxRightMoves)
 		{
 			/*
 			 * We need to increase before getting weight since we start in a
 			 * corner with no weight.
 			 */
-			nrOfRightMoves++;
 
-			addMove(nrOfDownMoves, nrOfRightMoves, MoveDirection.RIGHT);
+			addMove(downMoves, rightMoves + 1, MoveDirection.RIGHT);
 		}
 		else
 		{
@@ -111,15 +127,17 @@ public class Solution
 			throw new IllegalArgumentException("Solution is full.");
 		}
 
-		if (nrOfDownMoves < maxDownMoves)
+		int rightMoves = countRightMoves();
+		int downMoves = countDownMoves();
+
+		if (downMoves < maxDownMoves)
 		{
 			/*
 			 * We need to increase before getting weight since we start in a
 			 * corner with no weight.
 			 */
-			nrOfDownMoves++;
 
-			addMove(nrOfDownMoves, nrOfRightMoves, MoveDirection.DOWN);
+			addMove(downMoves + 1, rightMoves, MoveDirection.DOWN);
 		}
 		else
 		{
@@ -143,16 +161,35 @@ public class Solution
 	public void randomizeSolution()
 	{
 		allMoves.clear();
+		allMoves.addAll(randomizeSolution(0, 0));
+	}
+
+	/**
+	 * Generate a list of random moves from the given coordinates, that reach
+	 * the end properly.
+	 * 
+	 * @param row
+	 * @param column
+	 * @return
+	 */
+	private List<Move> randomizeSolution(int row, int column)
+	{
+		List<Move> newRandomMoves = new ArrayList<Move>();
+
+		int downMovesLeft = maxDownMoves - row;
+		int rightMovesLeft = maxRightMoves - column;
+		int totalMovesLeft = downMovesLeft + rightMovesLeft;
+
 		/* Create a list of directions */
 		List<MoveDirection> directions = new ArrayList<MoveDirection>();
 		/* Add height - 1 number of down moves */
-		for (int i = 0; i < maxDownMoves; i++)
+		for (int i = 0; i < downMovesLeft; i++)
 		{
 			directions.add(MoveDirection.DOWN);
 		}
 
 		/* Add width - 1 number of right moves */
-		for (int i = 0; i < maxRightMoves; i++)
+		for (int i = 0; i < rightMovesLeft; i++)
 		{
 			directions.add(MoveDirection.RIGHT);
 		}
@@ -160,14 +197,11 @@ public class Solution
 		/* Randomize the contents */
 		Collections.shuffle(directions);
 
-		int row = 0;
-		int column = 0;
-
 		/*
 		 * Get the correct coordinates and weight from field and overwrite the
 		 * entire list.
 		 */
-		for (int i = 0; i < maxSize; i++)
+		for (int i = 0; i < totalMovesLeft; i++)
 		{
 			MoveDirection direction = directions.get(i);
 			if (direction == MoveDirection.RIGHT)
@@ -181,13 +215,15 @@ public class Solution
 
 			allMoves.add(field.createMoveObject(row, column, direction));
 		}
+
+		return newRandomMoves;
 	}
 
 	/**
 	 * Apply a random change to the Solution. Change 5 directions in the
 	 * Solution. Which ones are changed is determined randomly.
 	 */
-	public void applyRandomChanges()
+	private void applyRandomChanges()
 	{
 		int numberOfChanges = 5;
 		Random r = new Random();
@@ -195,13 +231,43 @@ public class Solution
 		 * Need to reduce by one since we cannot swap the last element in the
 		 * list.
 		 */
-		int nrOfCurrentMoves = getNrOfCurrentMoves() - 1;
+		// int nrOfCurrentMoves = getNrOfCurrentMoves() - 1;
+		//
+		// for (int i = 0; i < numberOfChanges; i++)
+		// {
+		// int randomMove = r.nextInt(nrOfCurrentMoves);
+		// swapDirection(randomMove);
+		// }
 
-		for (int i = 0; i < numberOfChanges; i++)
-		{
-			int randomMove = r.nextInt(nrOfCurrentMoves);
-			swapDirection(randomMove);
-		}
+	}
+
+	/**
+	 * Pick a random point in the Solution and randomize the moves after that.
+	 */
+	public void finishSolutionRandomly()
+	{
+		Random r = new Random();
+		finishSolutionRandomly(r.nextInt(maxSize - 1));
+	}
+
+	/**
+	 * Clear the list from index and generate a new solution from index. Index
+	 * must be maxSize - 1 or smaller.
+	 * 
+	 * @param index
+	 */
+	public void finishSolutionRandomly(final int index)
+	{
+		Move indexMove = allMoves.get(index);
+		List<Move> keptMoves = new ArrayList<Move>();
+		keptMoves.addAll(allMoves.subList(0, index + 1));
+
+		allMoves.clear();
+
+		keptMoves.addAll(randomizeSolution(indexMove.getRow(),
+				indexMove.getColumn()));
+
+		allMoves.addAll(keptMoves);
 	}
 
 	/**
@@ -230,21 +296,13 @@ public class Solution
 	 * @param index
 	 * @return
 	 */
-	public final MoveDirection get(final int index)
+	public final Move get(final int index)
 	{
-		MoveDirection retVal = null;
+		Move retVal = null;
 
 		if (allMoves.size() >= index)
 		{
-			if (index <= totalMoves())
-			{
-				retVal = allMoves.get(index).getDirection();
-			}
-			else
-			{
-				throw new IllegalArgumentException(
-						"Solution has not been set for this point yet.");
-			}
+			retVal = allMoves.get(index);
 		}
 		else
 		{
@@ -301,7 +359,9 @@ public class Solution
 
 	/**
 	 * Toggle the move at the given index between Right or Down. Also updates
-	 * the total weight of the Solution. We cannot swap the last Move.
+	 * the total weight of the Solution. We cannot swap the last Move. This
+	 * method will finish the solution from this point with a randomly generated
+	 * list of moves.
 	 * 
 	 * @param index
 	 */
@@ -330,8 +390,11 @@ public class Solution
 					{
 						newMove = field.createMoveObject(currentRow - 1,
 								currentColumn + 1, MoveDirection.RIGHT);
-						// TODO: connect the move to the rest of the remaining
-						// moves.
+						allMoves.set(index, newMove);
+
+						/* Finish the solution randomly from here. */
+						// allMoves.addAll(randomizeSolution(newMove.getRow(),
+						// newMove.getColumn()));
 					}
 					else
 					{
@@ -344,8 +407,11 @@ public class Solution
 					{
 						newMove = field.createMoveObject(currentRow + 1,
 								currentColumn - 1, MoveDirection.DOWN);
-						// TODO: connect the move to the rest of the remaining
-						// moves.
+						allMoves.set(index, newMove);
+
+						/* Finish the solution randomly from here. */
+						// allMoves.addAll(randomizeSolution(newMove.getRow(),
+						// newMove.getColumn()));
 					}
 					else
 					{
@@ -357,8 +423,6 @@ public class Solution
 					/* error */
 					break;
 				}
-
-				allMoves.set(index, newMove);
 			}
 		}
 		else if (index == allMoves.size() - 1)
@@ -370,6 +434,24 @@ public class Solution
 			throw new IllegalArgumentException(
 					"This move has not been set yet.");
 		}
+	}
+
+	/**
+	 * Check if a move with the given coordinates is in the list of made moves.
+	 * 
+	 * @param nextMove
+	 * @return
+	 */
+	public boolean containsCoordinates(final int row, final int column)
+	{
+		for (Move m : allMoves)
+		{
+			if (m.getColumn() == column && m.getRow() == row)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean isNotOnEdgeOfMap(final int row, final int column)
@@ -386,16 +468,18 @@ public class Solution
 
 			if (this.getTotalWeight() != compare.getTotalWeight())
 			{
-				for (int i = 0; i < allMoves.size(); i++)
-				{
-					if (!allMoves.get(i).equals(compare.get(i)))
-					{
-						return false;
-					}
-				}
-
-				return true;
+				return false;
 			}
+
+			for (int i = 0; i < allMoves.size(); i++)
+			{
+				if (!allMoves.get(i).equals(compare.get(i)))
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		return false;
@@ -403,7 +487,7 @@ public class Solution
 
 	public Solution copy()
 	{
-		List<Move> allMovesCopy = new ArrayList<Move>(allMoves);
-		return new Solution(field, allMovesCopy);
+		Solution solution = new Solution(field, allMoves);
+		return solution;
 	}
 }
