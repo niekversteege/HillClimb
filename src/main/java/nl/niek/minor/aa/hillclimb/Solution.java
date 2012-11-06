@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import nl.niek.minor.aa.hillclimb.cli.RDPrinter;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
@@ -20,7 +19,7 @@ public class Solution
 {
 	private RightDownField	field;
 	private int				maxSize;
-	private List<Move>		allMoves	= null;
+	private List<Move>		allMoves;
 
 	final private int		maxDownMoves;
 	final private int		maxRightMoves;
@@ -102,11 +101,6 @@ public class Solution
 
 		if (rightMoves < maxRightMoves)
 		{
-			/*
-			 * We need to increase before getting weight since we start in a
-			 * corner with no weight.
-			 */
-
 			addMove(downMoves, rightMoves + 1, MoveDirection.RIGHT);
 		}
 		else
@@ -132,11 +126,6 @@ public class Solution
 
 		if (downMoves < maxDownMoves)
 		{
-			/*
-			 * We need to increase before getting weight since we start in a
-			 * corner with no weight.
-			 */
-
 			addMove(downMoves + 1, rightMoves, MoveDirection.DOWN);
 		}
 		else
@@ -226,10 +215,6 @@ public class Solution
 	{
 		Random r = new Random();
 		int nextInt = r.nextInt(allMoves.size());
-		if (nextInt == 0)
-		{
-			nextInt++;
-		}
 		finishSolutionRandomly(nextInt);
 	}
 
@@ -241,21 +226,20 @@ public class Solution
 	 */
 	public void finishSolutionRandomly(final int index)
 	{
-		RDPrinter.println("Finishing solution from point " + index + ".");
 		if (index < allMoves.size())
 		{
-			if (index < 1)
+			if (index < 0)
 			{
-				throw new IllegalArgumentException("Index cannot be 0.");
+				throw new IllegalArgumentException("Index cannot be negative.");
 			}
 			else
 			{
-				Move indexMove = allMoves.get(index - 1);
-				allMoves.subList(index, allMoves.size()).clear();
+				Move indexMove = allMoves.get(index);
+				allMoves.subList(index + 1, allMoves.size()).clear();
 
 				List<Move> randomizeSolution = randomizeSolution(
 						indexMove.getRow(), indexMove.getColumn());
-				
+
 				allMoves.addAll(randomizeSolution);
 			}
 		}
@@ -354,72 +338,25 @@ public class Solution
 	}
 
 	/**
-	 * Toggle the move at the given index between Right or Down. Also updates
-	 * the total weight of the Solution. We cannot swap the last Move. This
-	 * method will finish the solution from this point with a randomly generated
-	 * list of moves.
+	 * Toggle the move at the given index between Right or Down (and thus also
+	 * the move at index + 1). Also updates the total weight of the Solution. We
+	 * cannot swap the last Move. This method will finish the solution from this
+	 * point with a randomly generated list of moves.
 	 * 
 	 * @param index
 	 */
-	protected void swapDirection(int index)
+	protected void swapDirectionAndRebuild(int index)
 	{
 		if (index < (allMoves.size() - 1))
 		{
-			Move currentMove = allMoves.get(index);
+			List<MoveDirection> directions = getDirectionList();
 
-			int currentColumn = currentMove.getColumn();
-			int currentRow = currentMove.getRow();
+			directions.set(index, toggleDirection(directions.get(index)));
 
-			MoveDirection currentDirection = currentMove.getDirection();
+			directions.set(index + 1,
+					toggleDirection(directions.get(index + 1)));
 
-			Move newMove = null;
-
-			/*
-			 * We cannot swap directions on moves on the edges of the map.
-			 */
-			if (isNotOnEdgeOfMap(currentRow, currentColumn))
-			{
-				switch (currentDirection)
-				{
-				case DOWN:
-					if (currentRow > 0)
-					{
-						newMove = field.createMoveObject(currentRow - 1,
-								currentColumn + 1, MoveDirection.RIGHT);
-						allMoves.set(index, newMove);
-
-						/* Finish the solution randomly from here. */
-						// allMoves.addAll(randomizeSolution(newMove.getRow(),
-						// newMove.getColumn()));
-					}
-					else
-					{
-						throw new IllegalStateException(
-								"Down moves must be on row 1 or larger.");
-					}
-					break;
-				case RIGHT:
-					if (currentColumn > 0)
-					{
-						newMove = field.createMoveObject(currentRow + 1,
-								currentColumn - 1, MoveDirection.DOWN);
-						allMoves.set(index, newMove);
-
-						/* Finish the solution randomly from here. */
-						// allMoves.addAll(randomizeSolution(newMove.getRow(),
-						// newMove.getColumn()));
-					}
-					else
-					{
-						throw new IllegalStateException(
-								"Right moves must be on col 1 or larger.");
-					}
-					break;
-				default:
-					/* error */
-					break;
-				}
-			}
+			rebuildSolutionFromDirectionList(directions);
 		}
 		else if (index == allMoves.size() - 1)
 		{
@@ -430,6 +367,60 @@ public class Solution
 			throw new IllegalArgumentException(
 					"This move has not been set yet.");
 		}
+	}
+
+	private MoveDirection toggleDirection(MoveDirection direction)
+	{
+		if (direction == MoveDirection.DOWN)
+		{
+			return MoveDirection.RIGHT;
+		}
+
+		return MoveDirection.DOWN;
+	}
+
+	/**
+	 * Delete all moves and rebuild them from scratch with the given directions.
+	 * 
+	 * @param directions
+	 */
+	public void rebuildSolutionFromDirectionList(
+			final List<MoveDirection> directions)
+	{
+		allMoves.clear();
+
+		int column = 0;
+		int row = 0;
+
+		/*
+		 * Get the correct coordinates and weight from field and overwrite the
+		 * entire list.
+		 */
+		for (MoveDirection d : directions)
+		{
+			if (d == MoveDirection.RIGHT)
+			{
+				column++;
+			}
+			else if (d == MoveDirection.DOWN)
+			{
+				row++;
+			}
+
+			allMoves.add(field.createMoveObject(row, column, d));
+		}
+	}
+
+	private List<MoveDirection> getDirectionList()
+	{
+		List<MoveDirection> directions = new ArrayList<MoveDirection>();
+
+		for (Move m : allMoves)
+		{
+			directions.add(m.getDirection());
+		}
+
+		return directions;
 	}
 
 	/**
@@ -448,11 +439,6 @@ public class Solution
 			}
 		}
 		return false;
-	}
-
-	private boolean isNotOnEdgeOfMap(final int row, final int column)
-	{
-		return column < field.getWidth() - 1 && row < field.getHeight() - 1;
 	}
 
 	@Override
@@ -481,9 +467,40 @@ public class Solution
 		return false;
 	}
 
+	/**
+	 * Create a NEW copy of this Solution for modifying purposes.
+	 * 
+	 * @return
+	 */
 	public Solution copy()
 	{
 		Solution solution = new Solution(field, allMoves);
 		return solution;
+	}
+	
+	/**
+	 * Swap / Switch two moves at the first point after index where two different directions
+	 * follow each other.
+	 */
+	public void swapDirection(final int index)
+	{
+		for (int i = index; i < getNrOfCurrentMoves() - 1; i++)
+		{
+			MoveDirection currentDirection = allMoves.get(i).getDirection();
+			if (allMoves.get(i + 1).getDirection() != currentDirection)
+			{
+				swapDirectionAndRebuild(i);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Swap / Switch two moves at the first point where two different directions
+	 * follow each other.
+	 */
+	public void swapDirection()
+	{
+		swapDirection(0);
 	}
 }

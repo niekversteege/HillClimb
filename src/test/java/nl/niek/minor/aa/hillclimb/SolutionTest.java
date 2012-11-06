@@ -8,7 +8,6 @@ import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolutionTest
@@ -175,9 +174,56 @@ public class SolutionTest
 		solution.addRight();
 		solution.addDown();
 
-		solution.swapDirection(3);
+		solution.swapDirectionAndRebuild(3);
 
 		assertEquals(MoveDirection.RIGHT, solution.get(3).getDirection());
+	}
+	
+	@Test
+	public void testSwapDirections()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		solution.swapDirection();
+
+		int nrOfDownMoves = 0;
+		int nrOfRightMoves = 0;
+
+		for (int i = 0; i < solution.getNrOfCurrentMoves(); i++)
+		{
+			if (solution.get(i).getDirection() == MoveDirection.DOWN)
+			{
+				nrOfDownMoves++;
+			}
+			else
+			{
+				nrOfRightMoves++;
+			}
+		}
+		
+		assertEquals(18, solution.getNrOfCurrentMoves());
+		assertEquals(9, nrOfDownMoves);
+		assertEquals(9, nrOfRightMoves);
 	}
 
 	@Test
@@ -195,7 +241,7 @@ public class SolutionTest
 
 		assertEquals(26, solution.getTotalWeight());
 
-		solution.swapDirection(3);
+		solution.swapDirectionAndRebuild(3);
 
 		assertEquals(31, solution.getTotalWeight());
 	}
@@ -214,7 +260,7 @@ public class SolutionTest
 		solution.addDown();// 2
 		int beforeSize = solution.getNrOfCurrentMoves();
 
-		solution.swapDirection(3);
+		solution.swapDirectionAndRebuild(3);
 
 		assertEquals(beforeSize, solution.getNrOfCurrentMoves());
 	}
@@ -231,7 +277,7 @@ public class SolutionTest
 		solution.addDown();
 		solution.addRight();
 
-		solution.swapDirection(7);
+		solution.swapDirectionAndRebuild(7);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -246,7 +292,7 @@ public class SolutionTest
 		solution.addDown();// 4
 		solution.addRight(); // 5
 
-		solution.swapDirection(4);
+		solution.swapDirectionAndRebuild(4);
 
 		assertEquals(MoveDirection.DOWN, solution.get(4));
 	}

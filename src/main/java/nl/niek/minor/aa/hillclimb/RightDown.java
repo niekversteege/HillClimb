@@ -78,13 +78,12 @@ public class RightDown
 		Solution betterSolution = field.createEmptySolution();
 		betterSolution.randomizeSolution();
 
-//		RDPrinter.printSolutionInField(field, betterSolution);
 		RDPrinter.println("Random solution: " + betterSolution);
 
 		for (int i = 0; i < maxIterations; i++)
 		{
 			Solution newSolution = betterSolution.copy();
-			newSolution.finishSolutionRandomly();
+			newSolution.swapDirection();
 
 			if (newSolution.betterThan(betterSolution))
 			{
@@ -101,10 +100,6 @@ public class RightDown
 		{
 			bestSolution = betterSolution.copy();
 		}
-
-		RDPrinter
-				.println("Best solution after running random mutation algorithm:");
-		RDPrinter.println(bestSolution.toString());
 	}
 
 	/**
