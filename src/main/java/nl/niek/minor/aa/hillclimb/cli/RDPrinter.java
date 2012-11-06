@@ -17,7 +17,7 @@ public class RDPrinter
 
 	public static void printField(RightDownField field)
 	{
-
+		printSolutionInField(field, null);
 	}
 
 	public static void printSolutionInField(RightDownField field,
@@ -27,17 +27,18 @@ public class RDPrinter
 		{
 			for (int j = 0; j < field.getWidth(); j++)
 			{
-				if (solution.containsCoordinates(i, j))
+				int weight = field.getWeight(i, j);
+
+				if (solution != null && solution.containsCoordinates(i, j))
 				{
-					print("[X]");
+					print("[" + weight + "]x");
 				}
 				else
 				{
-					print("[ ]");
+					print("[" + weight + "] ");
 				}
 			}
 			print("\n");
 		}
-		println(solution.toString());
 	}
 }

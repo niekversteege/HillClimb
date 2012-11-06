@@ -78,6 +78,7 @@ public class RightDown
 		Solution betterSolution = field.createEmptySolution();
 		betterSolution.randomizeSolution();
 
+//		RDPrinter.printSolutionInField(field, betterSolution);
 		RDPrinter.println("Random solution: " + betterSolution);
 
 		for (int i = 0; i < maxIterations; i++)
@@ -91,7 +92,7 @@ public class RightDown
 				RDPrinter
 						.println("Applying random changes produced a better solution in iteration "
 								+ i
-								+ ". With weight: "
+								+ " with weight: "
 								+ betterSolution.getTotalWeight() + ".");
 			}
 		}

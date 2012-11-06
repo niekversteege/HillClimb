@@ -172,7 +172,7 @@ public class Solution
 	 * @param column
 	 * @return
 	 */
-	private List<Move> randomizeSolution(int row, int column)
+	protected List<Move> randomizeSolution(int row, int column)
 	{
 		List<Move> newRandomMoves = new ArrayList<Move>();
 
@@ -213,32 +213,10 @@ public class Solution
 				row++;
 			}
 
-			allMoves.add(field.createMoveObject(row, column, direction));
+			newRandomMoves.add(field.createMoveObject(row, column, direction));
 		}
 
 		return newRandomMoves;
-	}
-
-	/**
-	 * Apply a random change to the Solution. Change 5 directions in the
-	 * Solution. Which ones are changed is determined randomly.
-	 */
-	private void applyRandomChanges()
-	{
-		int numberOfChanges = 5;
-		Random r = new Random();
-		/*
-		 * Need to reduce by one since we cannot swap the last element in the
-		 * list.
-		 */
-		// int nrOfCurrentMoves = getNrOfCurrentMoves() - 1;
-		//
-		// for (int i = 0; i < numberOfChanges; i++)
-		// {
-		// int randomMove = r.nextInt(nrOfCurrentMoves);
-		// swapDirection(randomMove);
-		// }
-
 	}
 
 	/**
@@ -247,7 +225,12 @@ public class Solution
 	public void finishSolutionRandomly()
 	{
 		Random r = new Random();
-		finishSolutionRandomly(r.nextInt(maxSize - 1));
+		int nextInt = r.nextInt(allMoves.size());
+		if (nextInt == 0)
+		{
+			nextInt++;
+		}
+		finishSolutionRandomly(nextInt);
 	}
 
 	/**
@@ -258,16 +241,29 @@ public class Solution
 	 */
 	public void finishSolutionRandomly(final int index)
 	{
-		Move indexMove = allMoves.get(index);
-		List<Move> keptMoves = new ArrayList<Move>();
-		keptMoves.addAll(allMoves.subList(0, index + 1));
+		RDPrinter.println("Finishing solution from point " + index + ".");
+		if (index < allMoves.size())
+		{
+			if (index < 1)
+			{
+				throw new IllegalArgumentException("Index cannot be 0.");
+			}
+			else
+			{
+				Move indexMove = allMoves.get(index - 1);
+				allMoves.subList(index, allMoves.size()).clear();
 
-		allMoves.clear();
-
-		keptMoves.addAll(randomizeSolution(indexMove.getRow(),
-				indexMove.getColumn()));
-
-		allMoves.addAll(keptMoves);
+				List<Move> randomizeSolution = randomizeSolution(
+						indexMove.getRow(), indexMove.getColumn());
+				
+				allMoves.addAll(randomizeSolution);
+			}
+		}
+		else
+		{
+			throw new IllegalArgumentException(
+					"Index is too large. List is only " + allMoves.size());
+		}
 	}
 
 	/**

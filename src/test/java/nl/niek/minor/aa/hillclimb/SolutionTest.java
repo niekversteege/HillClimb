@@ -290,9 +290,40 @@ public class SolutionTest
 
 		assertEquals(18, solution.getNrOfCurrentMoves());
 	}
+	
+	@Test
+	public void testRandomizeSolutionFromIndex()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		Move move = solution.get(5);
+		solution.randomizeSolution(move.getRow(), move.getColumn());
+
+		assertEquals(18, solution.getNrOfCurrentMoves());
+	}
 
 	@Test
-	public void testApplyRandomChanges()
+	public void testFinishSolutionRandomly()
 	{
 		RightDownField defaultField = FieldFactory.getDefaultField();
 		solution = defaultField.createEmptySolution();
@@ -333,6 +364,7 @@ public class SolutionTest
 			}
 		}
 		
+		assertEquals(18, solution.getNrOfCurrentMoves());
 		assertEquals(9, nrOfDownMoves);
 		assertEquals(9, nrOfRightMoves);
 	}
@@ -462,6 +494,7 @@ public class SolutionTest
 
 		Solution anotherSolution = solution.copy();
 
+		assertEquals(solution.getNrOfCurrentMoves(), anotherSolution.getNrOfCurrentMoves());
 		assertTrue(solution.equals(anotherSolution));
 	}
 	
