@@ -2,6 +2,8 @@ package nl.niek.minor.aa.hillclimb;
 
 import static org.junit.Assert.*;
 
+import nl.niek.minor.aa.hillclimb.field.FieldFactory;
+import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 import org.junit.Before;
@@ -33,7 +35,8 @@ public class RightDownFieldTest
 		field = new RightDownField(10, 10);
 		Solution s = field.createEmptySolution();
 
-		assertEquals(20, s.size());
+		/* field with 10*10 has 18 moves to get across */
+		assertEquals(18, s.size());
 	}
 
 	@Test
@@ -73,5 +76,19 @@ public class RightDownFieldTest
 	{
 		field = new RightDownField(5, 3);
 		field.addRow(testRow0);
+	}
+
+	@Test
+	public void testCreateMoveObject()
+	{
+		field = new RightDownField(5, 5);
+		field.addRow(testRow0);
+
+		Move move = field.createMoveObject(0, 1, MoveDirection.RIGHT);
+
+		assertEquals(1, move.getColumn());
+		assertEquals(0, move.getRow());
+		assertEquals(5, move.getWeight());
+		assertEquals(MoveDirection.RIGHT, move.getDirection());
 	}
 }

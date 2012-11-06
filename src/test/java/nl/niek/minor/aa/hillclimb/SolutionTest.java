@@ -1,13 +1,12 @@
 package nl.niek.minor.aa.hillclimb;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import nl.niek.minor.aa.hillclimb.field.FieldFactory;
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolutionTest
@@ -55,8 +54,22 @@ public class SolutionTest
 		solution.addDown();// 9
 		solution.addDown();// 3
 		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
 
-		assertEquals(5 + 9 + 3 + 4, solution.getTotalWeight());
+		assertEquals(84, solution.getTotalWeight());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -72,8 +85,7 @@ public class SolutionTest
 		solution.addRight();
 		solution.addRight();
 		solution.addRight();
-		solution.addRight();
-		solution.addDown();
+
 		solution.addDown();
 		solution.addDown();
 		solution.addDown();
@@ -84,14 +96,13 @@ public class SolutionTest
 		solution.addDown();
 		solution.addDown();
 
-		solution.addDown();
+		solution.addRight();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testAddMoveRightMovesFull()
 	{
 		solution = FieldFactory.getDefaultField().createEmptySolution();
-		solution.addRight();
 		solution.addRight();
 		solution.addRight();
 		solution.addRight();
@@ -109,7 +120,6 @@ public class SolutionTest
 	public void testAddMoveDownMovesFull()
 	{
 		solution = FieldFactory.getDefaultField().createEmptySolution();
-		solution.addDown();
 		solution.addDown();
 		solution.addDown();
 		solution.addDown();
@@ -162,9 +172,28 @@ public class SolutionTest
 		solution.addDown();// 3 should become right
 		solution.addRight();
 
-		solution.swap(3);
+		solution.swapDirection(3);
 
 		assertEquals(MoveDirection.RIGHT, solution.get(3));
+	}
+
+	@Test
+	public void testSwapWeight()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addDown();//4
+		solution.addDown();//8
+		solution.addRight();//3
+		solution.addDown();// changes from 4 to 9 in swap
+		solution.addRight();//5
+
+		assertEquals(24, solution.getTotalWeight());
+		
+		solution.swapDirection(3);
+		
+		assertEquals(29, solution.getTotalWeight());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -179,6 +208,6 @@ public class SolutionTest
 		solution.addDown();// 3 should become right
 		solution.addRight();
 
-		solution.swap(7);
+		solution.swapDirection(7);
 	}
 }

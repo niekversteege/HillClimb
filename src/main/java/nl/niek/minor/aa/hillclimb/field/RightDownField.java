@@ -1,5 +1,6 @@
 package nl.niek.minor.aa.hillclimb.field;
 
+import nl.niek.minor.aa.hillclimb.Move;
 import nl.niek.minor.aa.hillclimb.Solution;
 
 /**
@@ -84,5 +85,19 @@ public class RightDownField
 			throw new IllegalArgumentException("Out of field bounds.");
 		}
 		return field[row][column];
+	}
+
+	/**
+	 * Create a Move object from the coordinates given.
+	 * 
+	 * @param row
+	 * @param column
+	 * @return
+	 */
+	public Move createMoveObject(final int row, final int column,
+			final MoveDirection direction)
+	{
+		Move move = new Move(row, column, getWeight(row, column), direction);
+		return move;
 	}
 }

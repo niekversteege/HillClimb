@@ -1,5 +1,8 @@
 package nl.niek.minor.aa.hillclimb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
@@ -15,7 +18,7 @@ public class Solution
 	private RightDownField	field;
 	private int				size;
 	private int				weight;
-	private MoveDirection[]	solutionSequence;
+	private List<Move>		allMoves;
 
 	private int				nrOfDownMoves;
 	private int				nrOfRightMoves;
@@ -36,21 +39,29 @@ public class Solution
 	public Solution(RightDownField field, final int height, final int width)
 	{
 		this.field = field;
-		this.size = (height + width);
+		this.size = ((height - 1) + (width - 1));
 		this.weight = 0;
 
 		this.nrOfDownMoves = 0;
 		this.nrOfRightMoves = 0;
 
-		this.maxDownMoves = height;
-		this.maxRightMoves = width;
+		this.maxDownMoves = height - 1;
+		this.maxRightMoves = width - 1;
 
-		solutionSequence = new MoveDirection[size];
+		allMoves = new ArrayList<Move>();
 	}
 
 	private final int totalMoves()
 	{
 		return nrOfRightMoves + nrOfDownMoves;
+	}
+
+	private void addMove(final int row, final int column,
+			MoveDirection direction)
+	{
+		Move newMove = field.createMoveObject(row, column, direction);
+
+		allMoves.add(newMove);
 	}
 
 	/**
@@ -60,22 +71,24 @@ public class Solution
 	 */
 	public void addRight()
 	{
-		checkFull();
-
-		if (nrOfRightMoves <= maxRightMoves)
+		if (isFull())
 		{
-			solutionSequence[totalMoves()] = MoveDirection.RIGHT;
+			throw new IllegalArgumentException("Solution is full.");
+		}
+
+		if (nrOfRightMoves < maxRightMoves)
+		{
 			/*
 			 * We need to increase before getting weight since we start in a
 			 * corner with no weight.
 			 */
 			nrOfRightMoves++;
 
-			this.weight += field.getWeight(nrOfDownMoves, nrOfRightMoves);
+			addMove(nrOfDownMoves, nrOfRightMoves, MoveDirection.RIGHT);
 		}
 		else
 		{
-			throw new IllegalArgumentException("Cannot go farther down.");
+			throw new IllegalArgumentException("Cannot go farther right.");
 		}
 	}
 
@@ -86,31 +99,35 @@ public class Solution
 	 */
 	public void addDown()
 	{
-		checkFull();
-
-		if (nrOfDownMoves <= maxDownMoves)
+		if (isFull())
 		{
-			solutionSequence[totalMoves()] = MoveDirection.DOWN;
+			throw new IllegalArgumentException("Solution is full.");
+		}
+
+		if (nrOfDownMoves < maxDownMoves)
+		{
 			/*
 			 * We need to increase before getting weight since we start in a
 			 * corner with no weight.
 			 */
 			nrOfDownMoves++;
 
-			this.weight += field.getWeight(nrOfDownMoves, nrOfRightMoves);
+			addMove(nrOfDownMoves, nrOfRightMoves, MoveDirection.DOWN);
 		}
 		else
 		{
-			throw new IllegalArgumentException("Cannot go farther right.");
+			throw new IllegalArgumentException("Cannot go farther down.");
 		}
 	}
 
-	private void checkFull()
+	private boolean isFull()
 	{
 		if (totalMoves() >= size)
 		{
-			throw new IllegalArgumentException("Solution is full.");
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -150,11 +167,11 @@ public class Solution
 	{
 		MoveDirection retVal = null;
 
-		if (solutionSequence.length >= index)
+		if (allMoves.size() >= index)
 		{
 			if (index <= totalMoves())
 			{
-				retVal = solutionSequence[index];
+				retVal = allMoves.get(index).getDirection();
 			}
 			else
 			{
@@ -175,11 +192,11 @@ public class Solution
 	{
 		StringBuffer buffer = new StringBuffer("[");
 
-		for (MoveDirection m : solutionSequence)
+		for (Move m : allMoves)
 		{
 			if (m != null)
 			{
-				buffer.append(m.toString());
+				buffer.append(m.getDirection().toString());
 			}
 		}
 
@@ -190,6 +207,13 @@ public class Solution
 
 	public final int getTotalWeight()
 	{
+		int weight = 0;
+
+		for (Move move : allMoves)
+		{
+			weight += move.getWeight();
+		}
+
 		return weight;
 	}
 
@@ -209,14 +233,34 @@ public class Solution
 	 * 
 	 * @param index
 	 */
-	public void swap(int index)
+	public void swapDirection(int index)
 	{
 		if (index <= totalMoves())
 		{
-			// delete weight from current move
-			// delete move from array
-			// replace it with the new move (toggle direction)
-			// add new weight
+			Move currentMove = allMoves.get(index);
+			int currentColumn = currentMove.getColumn();
+			int currentRow = currentMove.getRow();
+
+			allMoves.remove(index);
+
+			Move newMove = null;
+
+			if (currentMove.getDirection() == MoveDirection.DOWN)
+			{
+				// if down; row - 1; column + 1; to get a right move.
+				newMove = field.createMoveObject(currentRow - 1,
+						currentColumn + 1, MoveDirection.RIGHT);
+				/* We also need to swap the direction of the move before this one */
+			}
+			else
+			{
+				// else right: row + 1; column - 1; to get a down move.
+				newMove = field.createMoveObject(currentRow + 1,
+						currentColumn - 1, MoveDirection.DOWN);
+				/* We also need to swap the direction of the move before this one */
+			}
+
+			allMoves.set(index, newMove);
 		}
 		else
 		{

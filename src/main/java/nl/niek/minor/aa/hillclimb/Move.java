@@ -45,4 +45,9 @@ public class Move
 		return direction;
 	}
 
+	public void setDirection(final MoveDirection direction)
+	{
+		this.direction = direction;
+	}
+
 }
