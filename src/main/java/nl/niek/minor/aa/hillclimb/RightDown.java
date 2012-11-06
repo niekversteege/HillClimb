@@ -1,5 +1,6 @@
 package nl.niek.minor.aa.hillclimb;
 
+import nl.niek.minor.aa.hillclimb.cli.RDPrinter;
 import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 public class RightDown
@@ -40,6 +41,40 @@ public class RightDown
 	 */
 	public void run(HillclimbMethod method)
 	{
+		switch (method)
+		{
+		case NEXT_ASCENT:
+			RDPrinter.println("Running Next Ascent HillClimb algorithm.");
+			runNextAscent();
+			break;
+		case RANDOM_MUTATION:
+			RDPrinter.println("Running Random Mutation HillClimb algorithm.");
+			runRandomMutation();
+			break;
+		case STEEPEST_ASCENT:
+			runSteepestAscent();
+			RDPrinter.println("Running Steepest Ascent HillClimb algorithm.");
+			break;
+		default:
+			/* Error */
+			break;
+		}
+	}
+
+	private void runSteepestAscent()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void runNextAscent()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void runRandomMutation()
+	{
 		Solution currentSolution = field.createEmptySolution();
 		currentSolution.randomizeSolution();
 
@@ -50,8 +85,8 @@ public class RightDown
 	}
 
 	/**
-	 * Get the best solution that was found. Can return null if run() method is
-	 * not yet run.
+	 * Get the best solution that was found. Can return null if run() method has
+	 * not been called.
 	 * 
 	 * @return
 	 */

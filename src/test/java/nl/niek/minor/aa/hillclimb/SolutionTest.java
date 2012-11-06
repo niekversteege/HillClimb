@@ -231,4 +231,44 @@ public class SolutionTest
 
 		solution.swapDirection(7);
 	}
+
+	@Test
+	public void testRandomizeSolution()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+		solution.randomizeSolution();
+
+		assertEquals(18, solution.getNrOfCurrentMoves());
+	}
+
+	@Test
+	public void testRandomizeFullSolution()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addRight();// 5
+		solution.addDown();// 9
+		solution.addDown();// 3
+		solution.addDown();// 4
+		solution.addRight(); // 5
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addDown();// 2
+		solution.addRight();// 6
+		solution.addRight();// 2
+		solution.addRight();// 9
+		solution.addDown();// 9
+		solution.addRight();// 3
+		solution.addRight();// 5
+		solution.addDown();// 5
+		solution.addRight();// 7
+		solution.addRight(); // 6
+		solution.addDown(); // 0
+
+		solution.randomizeSolution();
+
+		assertEquals(18, solution.getNrOfCurrentMoves());
+	}
 }

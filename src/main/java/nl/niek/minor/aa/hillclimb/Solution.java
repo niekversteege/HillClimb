@@ -1,6 +1,7 @@
 package nl.niek.minor.aa.hillclimb;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import nl.niek.minor.aa.hillclimb.field.MoveDirection;
@@ -133,12 +134,50 @@ public class Solution
 	 */
 	public void randomizeSolution()
 	{
-		// TODO
+		allMoves.clear();
+		/* Create a list of directions */
+		List<MoveDirection> directions = new ArrayList<MoveDirection>();
+		/* Add height - 1 number of down moves */
+		for (int i = 0; i < maxDownMoves; i++)
+		{
+			directions.add(MoveDirection.DOWN);
+		}
+
+		/* Add width - 1 number of right moves */
+		for (int i = 0; i < maxRightMoves; i++)
+		{
+			directions.add(MoveDirection.RIGHT);
+		}
+
+		/* Randomize the contents */
+		Collections.shuffle(directions);
+
+		int row = 0;
+		int column = 0;
+
+		/*
+		 * Get the correct coordinates and weight from field and overwrite the
+		 * entire list.
+		 */
+		for (int i = 0; i < maxSize; i++)
+		{
+			MoveDirection direction = directions.get(i);
+			if (direction == MoveDirection.RIGHT)
+			{
+				column++;
+			}
+			else
+			{
+				row++;
+			}
+
+			allMoves.add(field.createMoveObject(row, column, direction));
+		}
 	}
 
 	/**
-	 * Apply a random change to the Solution. Only changes a set of moves, not
-	 * the entire solution.
+	 * Apply a random change to the Solution. Change 50% of the directions in
+	 * the Solution. Which ones are changed is determined randomly.
 	 */
 	public void applyRandomChange()
 	{
@@ -155,6 +194,11 @@ public class Solution
 		return maxSize;
 	}
 
+	/**
+	 * Return the amount of moves saved in the solution so far.
+	 * 
+	 * @return
+	 */
 	public final int getNrOfCurrentMoves()
 	{
 		return allMoves.size();
@@ -208,6 +252,11 @@ public class Solution
 		return buffer.toString();
 	}
 
+	/**
+	 * Re-count all the Move objects for their weight and return it.
+	 * 
+	 * @return
+	 */
 	public final int getTotalWeight()
 	{
 		int weight = 0;
@@ -236,7 +285,7 @@ public class Solution
 	 * 
 	 * @param index
 	 */
-	public void swapDirection(int index)
+	protected void swapDirection(int index)
 	{
 		if (index < allMoves.size())
 		{
