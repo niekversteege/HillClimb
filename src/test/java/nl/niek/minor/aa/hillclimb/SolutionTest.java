@@ -171,7 +171,7 @@ public class SolutionTest
 		solution.addRight();
 		solution.addDown();// 3 should become right
 		solution.addRight();
-		solution.addRight();
+		solution.addDown();
 
 		solution.swapDirection(3);
 
@@ -184,18 +184,37 @@ public class SolutionTest
 		RightDownField defaultField = FieldFactory.getDefaultField();
 		solution = defaultField.createEmptySolution();
 
-		solution.addDown();//4
-		solution.addDown();//8
-		solution.addRight();//3
+		solution.addDown();// 4
+		solution.addDown();// 8
+		solution.addRight();// 3
 		solution.addDown();// changes from 4 to 9 in swap
-		solution.addRight();//5
-		solution.addDown();//2
+		solution.addRight();// 5
+		solution.addDown();// 2
 
 		assertEquals(26, solution.getTotalWeight());
-		
+
 		solution.swapDirection(3);
-		
+
 		assertEquals(31, solution.getTotalWeight());
+	}
+
+	@Test
+	public void testSwapSolutionSize()
+	{
+		RightDownField defaultField = FieldFactory.getDefaultField();
+		solution = defaultField.createEmptySolution();
+
+		solution.addDown();// 4
+		solution.addDown();// 8
+		solution.addRight();// 3
+		solution.addDown();// changes from 4 to 9 in swap
+		solution.addRight();// 5
+		solution.addDown();// 2
+		int beforeSize = solution.getNrOfCurrentMoves();
+
+		solution.swapDirection(3);
+
+		assertEquals(beforeSize, solution.getNrOfCurrentMoves());
 	}
 
 	@Test(expected = IllegalArgumentException.class)

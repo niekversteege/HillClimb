@@ -16,8 +16,7 @@ import nl.niek.minor.aa.hillclimb.field.RightDownField;
 public class Solution
 {
 	private RightDownField	field;
-	private int				size;
-	private int				weight;
+	private int				maxSize;
 	private List<Move>		allMoves;
 
 	private int				nrOfDownMoves;
@@ -39,8 +38,7 @@ public class Solution
 	public Solution(RightDownField field, final int height, final int width)
 	{
 		this.field = field;
-		this.size = ((height - 1) + (width - 1));
-		this.weight = 0;
+		this.maxSize = ((height - 1) + (width - 1));
 
 		this.nrOfDownMoves = 0;
 		this.nrOfRightMoves = 0;
@@ -122,7 +120,7 @@ public class Solution
 
 	private boolean isFull()
 	{
-		if (totalMoves() >= size)
+		if (allMoves.size() >= maxSize)
 		{
 			return true;
 		}
@@ -152,9 +150,14 @@ public class Solution
 	 * 
 	 * @return Total solution size.
 	 */
-	public final int size()
+	public final int getMaxSize()
 	{
-		return size;
+		return maxSize;
+	}
+
+	public final int getNrOfCurrentMoves()
+	{
+		return allMoves.size();
 	}
 
 	/**
@@ -200,7 +203,7 @@ public class Solution
 			}
 		}
 
-		buffer.append("] - " + weight);
+		buffer.append("] - " + getTotalWeight());
 
 		return buffer.toString();
 	}
@@ -224,7 +227,7 @@ public class Solution
 	 */
 	public boolean betterThan(Solution anotherSolution)
 	{
-		return this.weight < anotherSolution.getTotalWeight();
+		return this.getTotalWeight() < anotherSolution.getTotalWeight();
 	}
 
 	/**
@@ -235,13 +238,12 @@ public class Solution
 	 */
 	public void swapDirection(int index)
 	{
-		if (index <  allMoves.size())
+		if (index < allMoves.size())
 		{
 			Move currentMove = allMoves.get(index);
+
 			int currentColumn = currentMove.getColumn();
 			int currentRow = currentMove.getRow();
-
-			allMoves.remove(index);
 
 			Move newMove = null;
 
