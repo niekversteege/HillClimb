@@ -341,12 +341,11 @@ public class Solution
 	/**
 	 * Toggle the move at the given index between Right or Down (and thus also
 	 * the move at index + 1). Also updates the total weight of the Solution. We
-	 * cannot swap the last Move. This method will finish the solution from this
-	 * point with a randomly generated list of moves.
+	 * cannot swap the last Move.
 	 * 
 	 * @param index
 	 */
-	protected void swapDirectionAndRebuild(int index)
+	public void swapDirectionAndRebuild(int index)
 	{
 		if (index < (allMoves.size() - 1))
 		{
@@ -368,16 +367,6 @@ public class Solution
 			throw new IllegalArgumentException(
 					"This move has not been set yet.");
 		}
-	}
-
-	private MoveDirection toggleDirection(MoveDirection direction)
-	{
-		if (direction == MoveDirection.DOWN)
-		{
-			return MoveDirection.RIGHT;
-		}
-
-		return MoveDirection.DOWN;
 	}
 
 	/**

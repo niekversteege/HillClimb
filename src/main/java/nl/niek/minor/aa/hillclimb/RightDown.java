@@ -63,14 +63,21 @@ public class RightDown
 
 	private void runSteepestAscent()
 	{
-		// TODO Auto-generated method stub
+		// TODO
+		// create a random solution
+		// for every possible change to solution
+		// -
 
 	}
 
 	private void runNextAscent()
 	{
-		// TODO Auto-generated method stub
-
+		// TODO
+		// create a random solution
+		// do while bettersolutionfound = false && i < nrOfPossibleChanges
+		// - apply change number i
+		// - if change creates better solution
+		// - random solution = bettersolution.copy
 	}
 
 	private void runRandomMutation()
@@ -96,7 +103,14 @@ public class RightDown
 			}
 		}
 
-		if (bestSolution == null || betterSolution.betterThan(bestSolution))
+		if (bestSolution != null)
+		{
+			if (betterSolution.betterThan(bestSolution))
+			{
+				bestSolution = betterSolution.copy();
+			}
+		}
+		else
 		{
 			bestSolution = betterSolution.copy();
 		}
