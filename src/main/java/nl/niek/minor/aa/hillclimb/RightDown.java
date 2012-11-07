@@ -98,20 +98,26 @@ public class RightDown
 				Solution newSolution = betterSolution.copy();
 				newSolution.swapDirectionAndRebuild(currentChange);
 				currentChange++;
-				
+
 				if (newSolution.betterThan(betterSolution))
 				{
 					betterSolution = newSolution.copy();
 				}
 			}
 			while (betterSolutionFound && currentChange < maxNrOfChanges);
-			
+
 			tryToReplaceBest(betterSolution);
 		}
 	}
 
 	private void runRandomMutation()
 	{
+		// PSEUDEOCODE.
+		// for iterations
+		// - create a random solution better solution
+		// - for R
+		// - - swap a direction at a random position
+		
 		for (int i = 0; i < maxIterations; i++)
 		{
 			Solution betterSolution = field.createEmptySolution();
