@@ -147,7 +147,7 @@ public class RightDown
 			if (solution.betterThan(bestSolution))
 			{
 				RDPrinter
-						.println("Found a better solution than the best so far.");
+						.println("Found a better solution than the best so far: " + solution.getTotalWeight());
 				bestSolution = solution.copy();
 			}
 		}
