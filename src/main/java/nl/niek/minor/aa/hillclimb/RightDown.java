@@ -6,6 +6,7 @@ import nl.niek.minor.aa.hillclimb.field.RightDownField;
 public class RightDown
 {
 	private static final int	DEFAULT_ITERATIONS	= 100;
+	private static final int	RANDOM_REPEATS		= 50;
 	private int					maxIterations		= 0;
 	private RightDownField		field;
 	private Solution			bestSolution;
@@ -74,7 +75,7 @@ public class RightDown
 
 	private void runNextAscent()
 	{
-		// TODO
+		// PSEUDEOCODE.
 		// for iterations
 		// - create a random solution better solution
 		// - for iterations
@@ -82,6 +83,31 @@ public class RightDown
 		// - - - if it's better, replace better solution
 		// - - - break while loop
 		// - - if bettersolution is better than best, replace
+
+		for (int i = 0; i < maxIterations; i++)
+		{
+			Solution betterSolution = field.createEmptySolution();
+			betterSolution.randomizeSolution();
+
+			boolean betterSolutionFound = false;
+			int maxNrOfChanges = betterSolution.getMaxSize() - 1;
+			int currentChange = 0;
+
+			do
+			{
+				Solution newSolution = betterSolution.copy();
+				newSolution.swapDirectionAndRebuild(currentChange);
+				currentChange++;
+				
+				if (newSolution.betterThan(betterSolution))
+				{
+					betterSolution = newSolution.copy();
+				}
+			}
+			while (betterSolutionFound && currentChange < maxNrOfChanges);
+			
+			tryToReplaceBest(betterSolution);
+		}
 	}
 
 	private void runRandomMutation()
@@ -91,7 +117,7 @@ public class RightDown
 			Solution betterSolution = field.createEmptySolution();
 			betterSolution.randomizeSolution();
 
-			for (int j = 0; j < maxIterations; j++)
+			for (int j = 0; j < RANDOM_REPEATS; j++)
 			{
 				Solution newSolution = betterSolution.copy();
 				newSolution.swapRandomDirection();
@@ -102,18 +128,24 @@ public class RightDown
 				}
 			}
 
-			if (bestSolution != null)
+			tryToReplaceBest(betterSolution);
+		}
+	}
+
+	private void tryToReplaceBest(Solution solution)
+	{
+		if (bestSolution != null)
+		{
+			if (solution.betterThan(bestSolution))
 			{
-				if (betterSolution.betterThan(bestSolution))
-				{
-					RDPrinter.println("Found a better solution than the best so far.");
-					bestSolution = betterSolution.copy();
-				}
+				RDPrinter
+						.println("Found a better solution than the best so far.");
+				bestSolution = solution.copy();
 			}
-			else
-			{
-				bestSolution = betterSolution.copy();
-			}
+		}
+		else
+		{
+			bestSolution = solution.copy();
 		}
 	}
 
