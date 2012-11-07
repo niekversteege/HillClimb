@@ -5,7 +5,7 @@ import nl.niek.minor.aa.hillclimb.field.RightDownField;
 
 public class RightDown
 {
-	private static final int	DEFAULT_ITERATIONS	= 200;
+	private static final int	DEFAULT_ITERATIONS	= 100;
 	private int					maxIterations		= 0;
 	private RightDownField		field;
 	private Solution			bestSolution;
@@ -82,37 +82,34 @@ public class RightDown
 
 	private void runRandomMutation()
 	{
-		Solution betterSolution = field.createEmptySolution();
-		betterSolution.randomizeSolution();
-
-		RDPrinter.println("Random solution: " + betterSolution);
-
 		for (int i = 0; i < maxIterations; i++)
 		{
-			Solution newSolution = betterSolution.copy();
-			newSolution.swapRandomDirection();
+			Solution betterSolution = field.createEmptySolution();
+			betterSolution.randomizeSolution();
 
-			if (newSolution.betterThan(betterSolution))
+			for (int j = 0; j < maxIterations; j++)
 			{
-				betterSolution = newSolution.copy();
-				RDPrinter
-						.println("Applying random changes produced a better solution in iteration "
-								+ i
-								+ " with weight: "
-								+ betterSolution.getTotalWeight() + ".");
-			}
-		}
+				Solution newSolution = betterSolution.copy();
+				newSolution.swapRandomDirection();
 
-		if (bestSolution != null)
-		{
-			if (betterSolution.betterThan(bestSolution))
+				if (newSolution.betterThan(betterSolution))
+				{
+					betterSolution = newSolution.copy();
+				}
+			}
+
+			if (bestSolution != null)
+			{
+				if (betterSolution.betterThan(bestSolution))
+				{
+					RDPrinter.println("Found a better solution than the best so far.");
+					bestSolution = betterSolution.copy();
+				}
+			}
+			else
 			{
 				bestSolution = betterSolution.copy();
 			}
-		}
-		else
-		{
-			bestSolution = betterSolution.copy();
 		}
 	}
 
