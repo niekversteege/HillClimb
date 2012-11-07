@@ -64,20 +64,24 @@ public class RightDown
 	private void runSteepestAscent()
 	{
 		// TODO
-		// create a random solution
-		// for every possible change to solution
-		// -
+		// for iterations
+		// - create a random solution currentHillTop
+		// - for iterations
+		// - - every possible change to solution
+		// - - -
 
 	}
 
 	private void runNextAscent()
 	{
 		// TODO
-		// create a random solution
-		// do while bettersolutionfound = false && i < nrOfPossibleChanges
-		// - apply change number i
-		// - if change creates better solution
-		// - random solution = bettersolution.copy
+		// for iterations
+		// - create a random solution better solution
+		// - for iterations
+		// - - for every change possible, while !bettersolutionfound, try it
+		// - - - if it's better, replace better solution
+		// - - - break while loop
+		// - - if bettersolution is better than best, replace
 	}
 
 	private void runRandomMutation()
